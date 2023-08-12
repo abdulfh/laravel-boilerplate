@@ -12,31 +12,26 @@
 		}
 	</style>
 	<center>
-		<h5>Membuat Laporan PDF Dengan DOMPDF Laravel</h4>
-		<h6><a target="_blank" href="https://www.malasngoding.com/membuat-laporan-…n-dompdf-laravel/">www.malasngoding.com</a></h5>
+		<h5>Membuat Laporan PDF Dengan Laravel</h4>
 	</center>
  
 	<table class='table table-bordered'>
 		<thead>
 			<tr>
 				<th>No</th>
+				<th>NIP</th>
 				<th>Nama</th>
-				<th>Email</th>
-				<th>Alamat</th>
-				<th>Telepon</th>
-				<th>Pekerjaan</th>
+				<th>Jabatan</th>
 			</tr>
 		</thead>
 		<tbody>
 			@php $i=1 @endphp
-			@foreach($pegawai as $p)
+			@foreach($karyawans as $karyawan)
 			<tr>
 				<td>{{ $i++ }}</td>
-				<td>{{$p->nama}}</td>
-				<td>{{$p->email}}</td>
-				<td>{{$p->alamat}}</td>
-				<td>{{$p->telepon}}</td>
-				<td>{{$p->pekerjaan}}</td>
+				<td>{{$karyawan['nip']}}</td>
+				<td>{{$karyawan['nama']}}</td>
+				<td>{{$karyawan['jabatan']}}</td>
 			</tr>
 			@endforeach
 		</tbody>
