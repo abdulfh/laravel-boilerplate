@@ -8,6 +8,8 @@ use App\Models\Jabatan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Exports\KaryawanExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class KaryawanController extends Controller
 {
@@ -163,5 +165,39 @@ class KaryawanController extends Controller
             return redirect()->route('home')
             ->with('error', 'Internal Server Error'); 
         }
+    }
+
+    public function downloadExcel()
+    {
+        $daftarKaryawan = $this->karyawanModel->paginate(10);
+
+        $downloadData = [];
+        foreach ($daftarKaryawan as $value) {
+            array_push($downloadData, [
+                'nip' => $value['nip'],
+                'nama' => $value['nama'],
+                'jabatan' => $value['jabatan']['nama']
+            ]);
+        }
+
+        $exportKaryawan = new KaryawanExport($downloadData);
+        return Excel::download($exportKaryawan, 'download.xlsx');
+    }
+
+    public function downloadPdf()
+    {
+        $daftarKaryawan = $this->karyawanModel->paginate(10);
+
+        $downloadData = [];
+        foreach ($daftarKaryawan as $value) {
+            array_push($downloadData, [
+                'nip' => $value['nip'],
+                'nama' => $value['nama'],
+                'jabatan' => $value['jabatan']['nama']
+            ]);
+        }
+
+        $exportKaryawan = new KaryawanExport($downloadData);
+        return Excel::download($exportKaryawan, 'download.xlsx');
     }
 }

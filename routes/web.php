@@ -53,3 +53,12 @@ Route::put('/karyawan/{id}/update',
 Route::delete('/karyawan/{id}/delete', 
 [KaryawanController::class, 'destroy'])
 ->name('karyawan.delete');
+
+
+// URL : karyawan/download/excel -> GET
+Route::get('/karyawan/download/excel', [KaryawanController::class, 'downloadExcel'])
+->name('karyawan.download.excel');
+
+// URL : karyawan/download/pdf -> GET
+Route::get('/karyawan/download/pdf', [KaryawanController::class, 'downloadPdf'])
+->name('karyawan.download.pdf');

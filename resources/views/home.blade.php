@@ -6,7 +6,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <a href="{{ route('karyawan.create') }}" class="btn btn-primary">Tambah Baru</a>
+                        <a href="{{ route('karyawan.download') }}" class="btn btn-primary">Tambah Baru</a>
                     </div>
                     <div class="card-body">
                        <div class="table-responsive">
