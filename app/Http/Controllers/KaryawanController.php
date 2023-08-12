@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\KaryawanStoreRequest;
 use App\Models\Karyawan;
 use App\Models\Jabatan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class KaryawanController extends Controller
 {
@@ -48,13 +51,21 @@ class KaryawanController extends Controller
     public function store(Request $request)
     {
         try {
+            // Validasi
+            $validator = Validator::make($request->all(), [
+                // 'nip' => ['required','string','min:5','unique:karyawans,nip'],
+                'nip' => ['required','string','min:5', Rule::unique('karyawans','nip')],
+                'nama' => ['required','string','min:3'],
+                'jabatan_id' => ['required']
+            ]);
+     
+            if ($validator->fails()) {
+                return redirect()->back()
+                ->withErrors($validator)->withInput();
+            }
+
             // Simpan Data karyawan 
-            $karyawan = [
-                'nip' => $request['nip'],
-                'nama' => $request['nama'],
-                'jabatan_id' => $request['jabatan_id'],
-            ];
-            $this->karyawanModel->create($karyawan);
+            $this->karyawanModel->create($validator->validate());
             
             return redirect()->route('home')
             ->with('success', 'Success Store Data');
@@ -83,7 +94,18 @@ class KaryawanController extends Controller
      */
     public function edit($id)
     {
-        //
+        try {
+            $cariKaryawan = $this->karyawanModel->whereId($id)->first();
+    
+            throw_if(empty($cariKaryawan), new \Exception("Error Processing Request", 1));
+            
+            $daftarJabatan = $this->jabatanModel->get();
+
+            return view('edit', compact('cariKaryawan', 'daftarJabatan'));
+        } catch (\Exception $th) {
+            return redirect()->route('home')
+            ->with('error', 'Data tidak valid'); 
+        }
     }
 
     /**
@@ -95,7 +117,32 @@ class KaryawanController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+
+            $validator = Validator::make($request->all(), [
+                // 'nip' => ['required','string','min:5','unique:karyawans,nip'],.
+                'nip' => ['required','string','min:5', Rule::unique('karyawans','nip')->ignore($id)],
+                'nama' => ['required','string','min:3'],
+                'jabatan_id' => ['required']
+            ]);
+     
+            if ($validator->fails()) {
+                return redirect()->back()
+                ->withErrors($validator)->withInput();
+            }
+
+            $cariKaryawan = $this->karyawanModel->whereId($id)->first();
+
+            throw_if(empty($cariKaryawan), new \Exception("Error Processing Request", 1));
+
+            $cariKaryawan->update($validator->validate());
+
+            return redirect()->route('home')
+            ->with('success', 'Data berhasil di update'); 
+        } catch (\Throwable $th) {
+            return redirect()->route('home')
+            ->with('error', 'Data tidak valid'); 
+        }
     }
 
     /**
